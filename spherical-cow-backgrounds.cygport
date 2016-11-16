@@ -1,0 +1,52 @@
+NAME="spherical-cow-backgrounds"
+VERSION=18.0.0
+RELEASE=1
+CATEGORY="X11"
+SUMMARY="Fedora 18 desktop wallpaper"
+DESCRIPTION="Default wallpaper for the Fedora 18 release, along with a
+collection of selected wallpapers contributed by the Fedora community."
+HOMEPAGE="https://fedoraproject.org/wiki/Design"
+SRC_URI="https://fedorahosted.org/released/design-team/${NAME}-${VERSION}.tar.xz"
+
+ARCH=noarch
+
+PKG_NAMES="${NAME} ${NAME}-extras"
+spherical_cow_backgrounds_DOCS="Attribution CC-BY-SA-3.0"
+spherical_cow_backgrounds_CONTENTS="
+	usr/share/backgrounds/spherical-cow/default/
+	usr/share/backgrounds/xfce/spherical-cow.*
+	usr/share/gnome-background-properties/desktop-backgrounds-spherical-cow.xml
+	usr/share/mate-background-properties/desktop-backgrounds-spherical-cow.xml
+	usr/share/wallpapers/Spherical_Cow/
+"
+spherical_cow_backgrounds_extras_SUMMARY="Fedora 18 extra wallpapers"
+spherical_cow_backgrounds_extras_DOCS="Attribution-Extras CC-BY-SA-3.0"
+spherical_cow_backgrounds_extras_CONTENTS="
+	usr/share/backgrounds/spherical-cow/extras/
+	usr/share/backgrounds/xfce/spherical-cow-*
+	usr/share/gnome-background-properties/desktop-backgrounds-spherical-cow-extras.xml
+	usr/share/mate-background-properties/desktop-backgrounds-spherical-cow-extras.xml
+	usr/share/wallpapers/Spherical_Cow_*/
+"
+
+CYGPORT_USE_UNSTABLE_API=1
+src_unpack_hook() {
+	mv 'CC-BY-SA 3.0' CC-BY-SA-3.0
+}
+
+src_compile() {
+	cd ${S}
+	cygmake
+}
+
+src_install() {
+	cd ${S}
+	cyginstall
+	mv ${D}/usr/share/{xfce4/backdrops,backgrounds/xfce}
+
+	dodir /usr/share/mate-background-properties
+	sed -e 's|gnome-wp|mate-wp|' default/desktop-backgrounds-spherical-cow.xml \
+	    > ${D}/usr/share/mate-background-properties/desktop-backgrounds-spherical-cow.xml
+	sed -e 's|gnome-wp|mate-wp|' extras/desktop-backgrounds-spherical-cow-extras.xml \
+	    > ${D}/usr/share/mate-background-properties/desktop-backgrounds-spherical-cow-extras.xml
+}
